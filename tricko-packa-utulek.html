@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Tričko Packa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Karla:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --paper:#efedd9;
+    --paper-card:#fbfaf3;
+    --ink:#23281e;
+    --ink-soft:rgba(35,40,30,.66);
+    --ink-faint:rgba(35,40,30,.46);
+    --pine:#2f4030;
+    --pine-ink:#f6f4e9;
+    --pine-strong:#233120;
+    --marigold:#c98a24;
+    --marigold-tint:rgba(201,138,36,.14);
+    --line:rgba(35,40,30,.15);
+    --shadow:0 16px 40px rgba(35,40,30,.12);
+    --swatch-pine:#33422e;
+    --swatch-bone:#ece3ca;
+    --radius-lg:20px;
+    --radius-md:14px;
+    --radius-sm:9px;
+    --shirt-color:var(--swatch-pine);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#171c14;
+      --paper-card:#1f2519;
+      --ink:#ede8d4;
+      --ink-soft:rgba(237,232,212,.72);
+      --ink-faint:rgba(237,232,212,.48);
+      --pine:#93b787;
+      --pine-ink:#182015;
+      --pine-strong:#a9cb9d;
+      --marigold:#f0b94a;
+      --marigold-tint:rgba(240,185,74,.16);
+      --line:rgba(237,232,212,.16);
+      --shadow:0 16px 40px rgba(0,0,0,.45);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#171c14;
+    --paper-card:#1f2519;
+    --ink:#ede8d4;
+    --ink-soft:rgba(237,232,212,.72);
+    --ink-faint:rgba(237,232,212,.48);
+    --pine:#93b787;
+    --pine-ink:#182015;
+    --pine-strong:#a9cb9d;
+    --marigold:#f0b94a;
+    --marigold-tint:rgba(240,185,74,.16);
+    --line:rgba(237,232,212,.16);
+    --shadow:0 16px 40px rgba(0,0,0,.45);
+  }
+
+  *{box-sizing:border-box;}
+  html{-webkit-text-size-adjust:100%;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Karla',ui-sans-serif,system-ui,sans-serif;
+    font-size:16px;
+    line-height:1.5;
+    padding-inline:clamp(16px,4vw,32px);
+  }
+  h1,h2,h3{
+    font-family:'Fraunces',ui-serif,Georgia,serif;
+    font-weight:600;
+    line-height:1.12;
+    text-wrap:balance;
+    margin:0;
+  }
+  a{color:inherit;}
+  button{font-family:inherit;}
+  .mono{font-family:'IBM Plex Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums;}
+  .eyebrow{
+    font-family:'IBM Plex Mono',ui-monospace,monospace;
+    font-size:.72rem;
+    letter-spacing:.11em;
+    text-transform:uppercase;
+    color:var(--ink-faint);
+  }
+  .shell{max-width:1180px;margin-inline:auto;}
+  img,svg{max-width:100%;}
+  :focus-visible{outline:2px solid var(--marigold);outline-offset:3px;border-radius:4px;}
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:.001ms !important;transition-duration:.001ms !important;}
+  }
+
+  /* ---------- announcement + header ---------- */
+  .announce{
+    background:var(--pine);
+    color:var(--pine-ink);
+  }
+  .announce .shell{
+    padding-block:8px;
+    text-align:center;
+    font-size:.82rem;
+    font-weight:500;
+    letter-spacing:.01em;
+  }
+  header.site{
+    border-bottom:1px solid var(--line);
+  }
+  header.site .shell{
+    display:flex;align-items:center;justify-content:space-between;gap:1.5rem;
+    padding-block:1.1rem;
+  }
+  .brand{
+    font-family:'Fraunces',serif;font-weight:700;font-size:1.5rem;letter-spacing:-.01em;
+    display:flex;align-items:baseline;gap:.4rem;
+  }
+  .brand small{
+    font-family:'IBM Plex Mono',monospace;font-size:.6rem;letter-spacing:.08em;
+    color:var(--ink-faint);text-transform:uppercase;font-weight:500;
+  }
+  nav.primary{display:flex;gap:1.75rem;font-size:.92rem;}
+  nav.primary a{text-decoration:none;color:var(--ink-soft);}
+  nav.primary a:hover{color:var(--ink);}
+  .cart-btn{
+    position:relative;border:1px solid var(--line);background:var(--paper-card);
+    border-radius:100px;padding:.55rem 1rem;display:flex;align-items:center;gap:.5rem;
+    cursor:pointer;font-size:.85rem;font-weight:600;color:var(--ink);
+  }
+  .cart-count{
+    background:var(--marigold);color:var(--pine-ink);
+    min-width:18px;height:18px;border-radius:50%;font-size:.68rem;font-weight:700;
+    display:grid;place-items:center;font-family:'IBM Plex Mono',monospace;
+  }
+  @media (max-width:720px){ nav.primary{display:none;} }
+
+  .crumbs{
+    padding-block:1.1rem .5rem;font-size:.82rem;color:var(--ink-faint);
+    display:flex;gap:.4rem;flex-wrap:wrap;
+  }
+  .crumbs a{text-decoration:none;}
+  .crumbs a:hover{color:var(--ink);}
+
+  /* ---------- PDP grid ---------- */
+  .pdp{
+    display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);
+    gap:clamp(1.5rem,4vw,3.25rem);
+    padding-block:1rem 3rem;
+  }
+  @media (max-width:900px){ .pdp{grid-template-columns:1fr;} }
+
+  .gallery{position:relative;}
+  @media (min-width:901px){ .gallery{position:sticky;top:1.25rem;align-self:start;} }
+
+  .stage{
+    aspect-ratio:1/1;border-radius:var(--radius-lg);
+    background:var(--paper-card);border:1px solid var(--line);box-shadow:var(--shadow);
+    position:relative;overflow:hidden;
+  }
+  .stage .panel{
+    position:absolute;inset:0;display:none;place-items:center;padding:8%;
+  }
+  .stage .panel.is-active{display:grid;}
+  .stage .panel svg{width:76%;height:76%;}
+  .stage-tag{
+    position:absolute;left:16px;top:16px;background:var(--marigold-tint);color:var(--marigold);
+    font-family:'IBM Plex Mono',monospace;font-size:.68rem;letter-spacing:.06em;
+    padding:.35rem .6rem;border-radius:100px;text-transform:uppercase;font-weight:600;
+  }
+  .thumbs{display:flex;gap:.65rem;margin-top:.85rem;flex-wrap:wrap;}
+  .thumb{
+    width:62px;height:62px;border-radius:11px;border:1.5px solid var(--line);
+    background:var(--paper-card);cursor:pointer;padding:9px;display:grid;place-items:center;
+  }
+  .thumb.is-active{border-color:var(--marigold);}
+  .thumb svg{width:100%;height:100%;}
+
+  /* ---------- info column ---------- */
+  .info > * + *{margin-top:1.35rem;}
+  .title-row h1{font-size:clamp(1.7rem,3vw,2.35rem);}
+  .rating-row{display:flex;align-items:center;gap:.6rem;font-size:.88rem;color:var(--ink-soft);margin-top:.5rem;}
+  .stars{color:var(--marigold);letter-spacing:.05em;font-size:.95rem;}
+  .rating-row a{text-decoration:underline;text-underline-offset:2px;color:inherit;}
+
+  .price-row{display:flex;align-items:baseline;gap:.7rem;}
+  .price{font-family:'IBM Plex Mono',monospace;font-size:1.7rem;font-weight:500;}
+  .price-note{font-size:.8rem;color:var(--ink-faint);}
+
+  .impact{
+    display:flex;gap:.85rem;align-items:flex-start;
+    background:var(--marigold-tint);border:1px solid rgba(201,138,36,.35);
+    border-radius:var(--radius-md);padding:1rem 1.1rem;
+  }
+  .impact svg{flex:none;width:26px;height:26px;color:var(--marigold);}
+  .impact p{margin:0;font-size:.9rem;line-height:1.5;}
+  .impact strong{font-weight:700;}
+
+  fieldset{border:0;margin:0;padding:0;}
+  legend{
+    font-size:.85rem;font-weight:600;margin-bottom:.6rem;padding:0;
+    display:flex;justify-content:space-between;width:100%;gap:1rem;
+  }
+  legend .legend-value{font-weight:400;color:var(--ink-soft);}
+  .swatches{display:flex;gap:.7rem;}
+  .swatch{
+    width:38px;height:38px;border-radius:50%;border:2px solid var(--line);
+    cursor:pointer;padding:0;position:relative;
+  }
+  .swatch[data-color="pine"]{background:var(--swatch-pine);}
+  .swatch[data-color="bone"]{background:var(--swatch-bone);}
+  .swatch.is-selected{border-color:var(--marigold);box-shadow:0 0 0 2px var(--paper),0 0 0 4px var(--marigold);}
+
+  .sizes{display:flex;gap:.55rem;flex-wrap:wrap;}
+  .size-btn{
+    min-width:48px;height:42px;padding-inline:.4rem;border-radius:var(--radius-sm);
+    border:1.5px solid var(--line);background:var(--paper-card);color:var(--ink);
+    font-weight:600;font-size:.88rem;cursor:pointer;
+  }
+  .size-btn.is-selected{border-color:var(--pine);background:var(--pine);color:var(--pine-ink);}
+  .size-warn{
+    font-size:.8rem;color:var(--marigold);margin-top:.55rem;display:none;font-weight:600;
+  }
+  .size-warn.is-shown{display:block;}
+
+  .size-guide{margin-top:.7rem;}
+  .size-guide summary{
+    font-size:.82rem;color:var(--ink-soft);cursor:pointer;text-decoration:underline;
+    text-underline-offset:2px;list-style:none;width:fit-content;
+  }
+  .size-guide summary::-webkit-details-marker{display:none;}
+  .size-table-wrap{overflow-x:auto;margin-top:.7rem;border:1px solid var(--line);border-radius:var(--radius-sm);}
+  table{border-collapse:collapse;width:100%;font-size:.83rem;min-width:380px;}
+  th,td{padding:.5rem .75rem;text-align:left;border-bottom:1px solid var(--line);}
+  thead th{font-family:'IBM Plex Mono',monospace;font-size:.7rem;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-faint);}
+  tbody td{font-variant-numeric:tabular-nums;}
+  tr:last-child td{border-bottom:0;}
+
+  .buy-row{display:flex;gap:.75rem;align-items:stretch;flex-wrap:wrap;}
+  .qty{
+    display:flex;align-items:center;border:1.5px solid var(--line);border-radius:var(--radius-sm);
+    overflow:hidden;background:var(--paper-card);
+  }
+  .qty button{
+    width:38px;background:transparent;border:0;font-size:1.1rem;cursor:pointer;color:var(--ink);
+  }
+  .qty input{
+    width:40px;text-align:center;border:0;background:transparent;color:var(--ink);
+    font-family:'IBM Plex Mono',monospace;font-size:.95rem;
+  }
+  .add-cart{
+    flex:1;min-width:200px;background:var(--pine);color:var(--pine-ink);border:0;
+    border-radius:var(--radius-sm);font-weight:700;font-size:.95rem;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;gap:.55rem;
+  }
+  .add-cart svg{width:18px;height:18px;}
+  .add-cart.is-added{background:var(--marigold);}
+  .buy-now{
+    width:100%;background:transparent;border:1.5px solid var(--line);color:var(--ink);
+    border-radius:var(--radius-sm);font-weight:600;font-size:.88rem;padding:.7rem;cursor:pointer;
+  }
+
+  .trust-row{
+    display:grid;grid-template-columns:repeat(2,1fr);gap:.85rem;
+    font-size:.8rem;color:var(--ink-soft);
+  }
+  .trust-row li{display:flex;align-items:center;gap:.5rem;list-style:none;}
+  .trust-row svg{width:17px;height:17px;flex:none;color:var(--pine);}
+  .trust-row{padding:0;margin:0;}
+
+  .accordion details{border-top:1px solid var(--line);padding-block:.9rem;}
+  .accordion details:last-child{border-bottom:1px solid var(--line);}
+  .accordion summary{
+    cursor:pointer;font-weight:600;font-size:.92rem;list-style:none;
+    display:flex;justify-content:space-between;align-items:center;
+  }
+  .accordion summary::-webkit-details-marker{display:none;}
+  .accordion summary::after{content:'+';font-size:1.1rem;color:var(--ink-faint);}
+  .accordion details[open] summary::after{content:'\2212';}
+  .accordion .body{font-size:.86rem;color:var(--ink-soft);margin-top:.6rem;line-height:1.6;}
+
+  /* ---------- process ---------- */
+  .process{padding-block:2.5rem;border-top:1px solid var(--line);}
+  .process h2{font-size:clamp(1.4rem,2.6vw,1.85rem);}
+  .process-lede{color:var(--ink-soft);max-width:56ch;margin-top:.5rem;font-size:.95rem;}
+  .steps{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:1.75rem;
+  }
+  @media (max-width:760px){ .steps{grid-template-columns:1fr;} }
+  .step{display:flex;gap:1rem;}
+  .step-num{
+    font-family:'Fraunces',serif;font-size:1.6rem;font-weight:600;color:var(--marigold);
+    flex:none;width:2.2rem;
+  }
+  .step h3{font-size:1rem;margin-bottom:.35rem;}
+  .step p{margin:0;font-size:.86rem;color:var(--ink-soft);line-height:1.55;}
+
+  /* ---------- shelter spotlight ---------- */
+  .spotlight{padding-block:2.5rem;border-top:1px solid var(--line);}
+  .spotlight-card{
+    display:grid;grid-template-columns:220px 1fr;gap:2rem;align-items:center;
+    background:var(--paper-card);border:1px solid var(--line);border-radius:var(--radius-lg);
+    padding:clamp(1.25rem,3vw,2.25rem);box-shadow:var(--shadow);
+  }
+  @media (max-width:700px){ .spotlight-card{grid-template-columns:1fr;} }
+  .spotlight-art{
+    aspect-ratio:1/1;background:var(--marigold-tint);border-radius:var(--radius-md);
+    display:grid;place-items:center;
+  }
+  .spotlight-art svg{width:70%;height:70%;}
+  .spotlight-eyebrow{color:var(--marigold);font-weight:600;}
+  .spotlight-card h3{font-size:1.4rem;margin-top:.3rem;}
+  .spotlight-card p{color:var(--ink-soft);font-size:.92rem;line-height:1.6;margin-top:.6rem;}
+  .spotlight-stats{display:flex;gap:1.75rem;margin-top:1.1rem;flex-wrap:wrap;}
+  .spotlight-stats div strong{
+    display:block;font-family:'IBM Plex Mono',monospace;font-size:1.15rem;font-weight:500;
+  }
+  .spotlight-stats div span{font-size:.75rem;color:var(--ink-faint);}
+  .goal{margin-top:1.3rem;}
+  .goal-labels{display:flex;justify-content:space-between;font-size:.8rem;color:var(--ink-soft);margin-bottom:.4rem;}
+  .goal-labels .mono{color:var(--ink);}
+  .goal-bar{height:9px;border-radius:100px;background:var(--line);overflow:hidden;}
+  .goal-bar > span{display:block;height:100%;background:var(--marigold);border-radius:100px;}
+
+  /* ---------- reviews ---------- */
+  .reviews{padding-block:2.5rem;border-top:1px solid var(--line);}
+  .reviews-head{display:grid;grid-template-columns:auto 1fr;gap:2.5rem;align-items:center;}
+  @media (max-width:700px){ .reviews-head{grid-template-columns:1fr;} }
+  .score{text-align:center;}
+  .score .num{font-family:'Fraunces',serif;font-size:3.2rem;font-weight:600;}
+  .score .stars{display:block;margin-top:.2rem;}
+  .score .count{font-size:.8rem;color:var(--ink-faint);margin-top:.2rem;}
+  .bars{display:flex;flex-direction:column;gap:.4rem;}
+  .bar-row{display:grid;grid-template-columns:2rem 1fr 2.5rem;align-items:center;gap:.6rem;font-size:.78rem;color:var(--ink-soft);}
+  .bar-track{height:7px;border-radius:100px;background:var(--line);overflow:hidden;}
+  .bar-track > span{display:block;height:100%;background:var(--marigold);}
+  .review-list{display:grid;gap:1.5rem;margin-top:2rem;}
+  .review{border-top:1px solid var(--line);padding-top:1.25rem;}
+  .review-top{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;align-items:baseline;}
+  .review-name{font-weight:700;font-size:.92rem;}
+  .verified{
+    font-size:.68rem;color:var(--pine);font-weight:600;margin-left:.5rem;
+    background:var(--marigold-tint);padding:.15rem .5rem;border-radius:100px;
+  }
+  .review-meta{font-size:.76rem;color:var(--ink-faint);}
+  .review p{font-size:.9rem;color:var(--ink-soft);line-height:1.6;margin:.5rem 0 0;}
+
+  /* ---------- related ---------- */
+  .related{padding-block:2.5rem;border-top:1px solid var(--line);}
+  .related-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem;margin-top:1.75rem;}
+  @media (max-width:700px){ .related-grid{grid-template-columns:1fr;} }
+  .rcard{
+    background:var(--paper-card);border:1px solid var(--line);border-radius:var(--radius-md);
+    padding:1.25rem;
+  }
+  .rcard .rimg{
+    aspect-ratio:1/1;background:var(--paper);border-radius:var(--radius-sm);
+    display:grid;place-items:center;margin-bottom:.9rem;
+  }
+  .rcard .rimg svg{width:52%;height:52%;color:var(--pine);}
+  .rcard h4{font-size:.95rem;font-weight:700;margin:0;}
+  .rcard .rprice{font-family:'IBM Plex Mono',monospace;font-size:.85rem;color:var(--ink-soft);margin-top:.25rem;}
+
+  footer.site{border-top:1px solid var(--line);padding-block:2.5rem 3rem;margin-top:1rem;}
+  .foot-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:2rem;}
+  @media (max-width:700px){ .foot-grid{grid-template-columns:1fr 1fr;} }
+  .foot-grid h5{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-faint);margin:0 0 .8rem;font-weight:600;}
+  .foot-grid ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.5rem;font-size:.86rem;}
+  .foot-grid a{text-decoration:none;color:var(--ink-soft);}
+  .foot-grid a:hover{color:var(--ink);}
+  .foot-blurb{font-size:.86rem;color:var(--ink-soft);max-width:34ch;line-height:1.55;margin-top:.7rem;}
+  .foot-bottom{
+    display:flex;justify-content:space-between;flex-wrap:wrap;gap:.8rem;
+    margin-top:2.5rem;padding-top:1.5rem;border-top:1px solid var(--line);
+    font-size:.76rem;color:var(--ink-faint);
+  }
+
+  /* ---------- toast ---------- */
+  .toast{
+    position:fixed;left:50%;bottom:24px;transform:translate(-50%,12px);
+    background:var(--pine);color:var(--pine-ink);padding:.85rem 1.25rem;border-radius:var(--radius-sm);
+    font-size:.86rem;font-weight:600;box-shadow:var(--shadow);opacity:0;pointer-events:none;
+    transition:opacity .25s ease, transform .25s ease;z-index:50;display:flex;align-items:center;gap:.6rem;
+  }
+  .toast svg{width:16px;height:16px;flex:none;}
+  .toast.is-shown{opacity:1;transform:translate(-50%,0);}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="tee-front" viewBox="0 0 100 100">
+      <path d="M30 8 L40 8 Q50 17 60 8 L70 8 L88 24 L76 36 L70 30 L70 92 L30 92 L30 30 L24 36 L12 24 Z"
+            fill="var(--shirt-color)" stroke="rgba(0,0,0,.12)" stroke-width="1"/>
+      <g fill="var(--paper-card)">
+        <ellipse cx="50" cy="50" rx="7" ry="9"/>
+        <circle cx="41" cy="38" r="4.2"/>
+        <circle cx="50" cy="35" r="4.4"/>
+        <circle cx="59" cy="38" r="4.2"/>
+      </g>
+    </symbol>
+
+    <symbol id="tee-back" viewBox="0 0 100 100">
+      <path d="M30 8 L70 8 L88 24 L76 36 L70 30 L70 92 L30 92 L30 30 L24 36 L12 24 Z"
+            fill="var(--shirt-color)" stroke="rgba(0,0,0,.12)" stroke-width="1"/>
+      <text x="50" y="42" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="5.2"
+            fill="var(--paper-card)" letter-spacing=".04em">100 KČ =</text>
+      <text x="50" y="49" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="5.2"
+            fill="var(--paper-card)" letter-spacing=".04em">1 DEN PÉČE</text>
+      <g fill="var(--paper-card)">
+        <ellipse cx="50" cy="62" rx="4.5" ry="5.6"/>
+        <circle cx="45" cy="55" r="2.6"/>
+        <circle cx="50" cy="53" r="2.7"/>
+        <circle cx="55" cy="55" r="2.6"/>
+      </g>
+    </symbol>
+
+    <symbol id="tee-detail" viewBox="0 0 100 100">
+      <pattern id="weave" width="6" height="6" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
+        <line x1="0" y1="0" x2="0" y2="6" stroke="var(--shirt-color)" stroke-width="6" opacity=".9"/>
+      </pattern>
+      <rect x="4" y="4" width="92" height="92" rx="10" fill="url(#weave)"/>
+      <circle cx="50" cy="50" r="30" fill="none" stroke="var(--paper-card)" stroke-width="1.4" stroke-dasharray="2 3"/>
+      <g fill="var(--paper-card)">
+        <ellipse cx="50" cy="55" rx="12" ry="15"/>
+        <circle cx="34" cy="36" r="7"/>
+        <circle cx="50" cy="30" r="7.4"/>
+        <circle cx="66" cy="36" r="7"/>
+      </g>
+    </symbol>
+
+    <symbol id="shelter-card" viewBox="0 0 100 100">
+      <line x1="6" y1="82" x2="94" y2="82" stroke="var(--line)" stroke-width="2"/>
+      <ellipse cx="50" cy="70" rx="24" ry="14" fill="var(--pine)"/>
+      <circle cx="30" cy="52" r="13" fill="var(--pine)"/>
+      <path d="M20 44 L16 30 L28 40 Z" fill="var(--pine)"/>
+      <path d="M40 44 L44 30 L32 40 Z" fill="var(--pine)"/>
+      <circle cx="26" cy="50" r="1.6" fill="var(--paper-card)"/>
+      <path d="M74 60 Q86 55 84 68 Q82 76 72 74" fill="none" stroke="var(--pine)" stroke-width="5" stroke-linecap="round"/>
+      <path d="M50 30 C50 24 58 22 60 28 C62 22 70 24 70 30 C70 36 60 42 60 42 C60 42 50 36 50 30 Z" fill="var(--marigold)"/>
+    </symbol>
+
+    <symbol id="ic-truck" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.6" d="M2 6h11v10H2zM13 10h4l4 3v3h-8v-6z"/><circle cx="6.5" cy="17.5" r="1.6" fill="currentColor"/><circle cx="17" cy="17.5" r="1.6" fill="currentColor"/></symbol>
+    <symbol id="ic-return" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.6" d="M4 9a8 8 0 1 1 1.6 8.4M4 9V4M4 9h5"/></symbol>
+    <symbol id="ic-leaf" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.6" d="M4 20c8-1 14-7 15-15-8 1-14 7-15 15Z"/></symbol>
+    <symbol id="ic-box" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.6" d="M3 8l9-5 9 5-9 5-9-5Zm0 0v9l9 5m0-14v14m9-14v9l-9 5"/></symbol>
+    <symbol id="ic-paw" viewBox="0 0 24 24"><g fill="currentColor"><ellipse cx="12" cy="16" rx="5.4" ry="4.4"/><circle cx="6.3" cy="9.6" r="2"/><circle cx="11" cy="6.6" r="2.1"/><circle cx="16.7" cy="9.6" r="2"/></g></symbol>
+    <symbol id="ic-cart" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.7" d="M3 4h2l2.6 12.4a2 2 0 0 0 2 1.6h7.6a2 2 0 0 0 2-1.6L21 8H6"/><circle cx="9.5" cy="20.5" r="1.4" fill="currentColor"/><circle cx="17.5" cy="20.5" r="1.4" fill="currentColor"/></symbol>
+    <symbol id="ic-check" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M4 12.5 9.5 18 20 6"/></symbol>
+  </defs>
+</svg>
+
+<div class="announce"><div class="shell"><span class="mono" style="font-size:.75rem;letter-spacing:.03em;">🐾&nbsp; 100 Kč z každého trička jde přímo útulku Šance &nbsp;·&nbsp; doprava zdarma nad 999 Kč</span></div></div>
+
+<header class="site">
+  <div class="shell">
+    <div class="brand">PACKA <small>obchod s dobrým úmyslem</small></div>
+    <nav class="primary">
+      <a href="#">Trička</a>
+      <a href="#spotlight">Útulky</a>
+      <a href="#process">Jak to funguje</a>
+      <a href="#reviews">Recenze</a>
+    </nav>
+    <button class="cart-btn" id="cartBtn" type="button" aria-label="Košík">
+      <svg width="18" height="18"><use href="#ic-cart"/></svg>
+      Košík
+      <span class="cart-count mono" id="cartCount">0</span>
+    </button>
+  </div>
+</header>
+
+<div class="shell">
+  <p class="crumbs"><a href="#">Domů</a><span>/</span><a href="#">Trička</a><span>/</span><span>Tričko Packa</span></p>
+
+  <div class="pdp">
+    <div class="gallery">
+      <div class="stage">
+        <span class="stage-tag">Limitovaná edice</span>
+        <div class="panel is-active" data-panel="front"><svg><use href="#tee-front"/></svg></div>
+        <div class="panel" data-panel="back"><svg><use href="#tee-back"/></svg></div>
+        <div class="panel" data-panel="detail"><svg><use href="#tee-detail"/></svg></div>
+        <div class="panel" data-panel="shelter"><svg><use href="#shelter-card"/></svg></div>
+      </div>
+      <div class="thumbs">
+        <button class="thumb is-active" data-panel="front" aria-label="Zobrazit přední stranu"><svg><use href="#tee-front"/></svg></button>
+        <button class="thumb" data-panel="back" aria-label="Zobrazit zadní stranu"><svg><use href="#tee-back"/></svg></button>
+        <button class="thumb" data-panel="detail" aria-label="Detail výšivky packy"><svg><use href="#tee-detail"/></svg></button>
+        <button class="thumb" data-panel="shelter" aria-label="Náš partnerský útulek"><svg><use href="#shelter-card"/></svg></button>
+      </div>
+    </div>
+
+    <div class="info">
+      <div class="title-row">
+        <p class="eyebrow">Packa × Útulek Šance</p>
+        <h1>Tričko Packa</h1>
+        <div class="rating-row">
+          <span class="stars" aria-hidden="true">★★★★★</span>
+          <span><strong class="mono">4,9</strong> · <a href="#reviews">214 recenzí</a></span>
+        </div>
+      </div>
+
+      <div class="price-row">
+        <span class="price">590 Kč</span>
+        <span class="price-note">vč. DPH, doprava od 79 Kč</span>
+      </div>
+
+      <div class="impact">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#ic-paw"/></svg>
+        <p><strong>100 Kč</strong> z téhle ceny pošleme přímo útulku Šance — pokryje to jeden den krmiva a veterinární péče pro pejska, který čeká na domov.</p>
+      </div>
+
+      <fieldset>
+        <legend>Barva <span class="legend-value mono" id="colorLabel">Lesní zelená</span></legend>
+        <div class="swatches" role="group" aria-label="Vyberte barvu">
+          <button type="button" class="swatch is-selected" data-color="pine" data-label="Lesní zelená" aria-label="Lesní zelená" aria-pressed="true"></button>
+          <button type="button" class="swatch" data-color="bone" data-label="Slonová kost" aria-label="Slonová kost" aria-pressed="false"></button>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Velikost <span class="legend-value mono" id="sizeLabel">nevybráno</span></legend>
+        <div class="sizes" role="group" aria-label="Vyberte velikost">
+          <button type="button" class="size-btn" data-size="XS">XS</button>
+          <button type="button" class="size-btn" data-size="S">S</button>
+          <button type="button" class="size-btn" data-size="M">M</button>
+          <button type="button" class="size-btn" data-size="L">L</button>
+          <button type="button" class="size-btn" data-size="XL">XL</button>
+          <button type="button" class="size-btn" data-size="XXL">XXL</button>
+        </div>
+        <p class="size-warn" id="sizeWarn">Nejdřív prosím vyberte velikost.</p>
+        <details class="size-guide">
+          <summary>Tabulka velikostí (cm)</summary>
+          <div class="size-table-wrap">
+            <table>
+              <thead><tr><th scope="col">Velikost</th><th scope="col">Šířka hrudi</th><th scope="col">Délka</th></tr></thead>
+              <tbody>
+                <tr><td>XS</td><td class="mono">46</td><td class="mono">66</td></tr>
+                <tr><td>S</td><td class="mono">49</td><td class="mono">69</td></tr>
+                <tr><td>M</td><td class="mono">52</td><td class="mono">72</td></tr>
+                <tr><td>L</td><td class="mono">55</td><td class="mono">75</td></tr>
+                <tr><td>XL</td><td class="mono">58</td><td class="mono">78</td></tr>
+                <tr><td>XXL</td><td class="mono">61</td><td class="mono">81</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </details>
+      </fieldset>
+
+      <div class="buy-row">
+        <div class="qty">
+          <button type="button" id="qtyMinus" aria-label="Snížit počet kusů">−</button>
+          <input id="qtyInput" class="mono" type="text" inputmode="numeric" value="1" aria-label="Počet kusů" readonly />
+          <button type="button" id="qtyPlus" aria-label="Zvýšit počet kusů">+</button>
+        </div>
+        <button type="button" class="add-cart" id="addCartBtn">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#ic-cart"/></svg>
+          Přidat do košíku
+        </button>
+      </div>
+      <button type="button" class="buy-now">Koupit rovnou</button>
+
+      <ul class="trust-row">
+        <li><svg viewBox="0 0 24 24"><use href="#ic-truck"/></svg>Doprava zdarma nad 999 Kč</li>
+        <li><svg viewBox="0 0 24 24"><use href="#ic-return"/></svg>Vrácení do 30 dnů</li>
+        <li><svg viewBox="0 0 24 24"><use href="#ic-leaf"/></svg>100% biobavlna, GOTS</li>
+        <li><svg viewBox="0 0 24 24"><use href="#ic-box"/></svg>Balení bez plastu</li>
+      </ul>
+
+      <div class="accordion">
+        <details open>
+          <summary>Materiál a péče</summary>
+          <p class="body">155 g/m², 100% česaná biobavlna s certifikací GOTS. Unisex střih, výšivka packy na hrudi. Perte na 30 °C naruby, sušte mimo přímé slunce, potisk nežehlete.</p>
+        </details>
+        <details>
+          <summary>Doprava a vrácení</summary>
+          <p class="body">Doručení do 2–4 pracovních dnů kurýrem nebo na výdejní místo. Doprava zdarma při objednávce nad 999 Kč. Nesedí velikost? Vrácení nebo výměna do 30 dnů zdarma.</p>
+        </details>
+        <details>
+          <summary>Jak funguje darování 100 Kč</summary>
+          <p class="body">Z každé prodané kusu odkládáme 100 Kč do sbírkového fondu. Jednou měsíčně částku pošleme útulku Šance a zveřejníme vyúčtování na jejich webu — žádné skryté procenta.</p>
+        </details>
+      </div>
+    </div>
+  </div>
+
+  <section class="process" id="process">
+    <p class="eyebrow">Cesta vašeho trička</p>
+    <h2>Jak vaše 100 Kč pomůže</h2>
+    <p class="process-lede">Žádné nejasné „procento ze zisku“. Přesně víme, kolik peněz z každé objednávky jde kam a kdy.</p>
+    <div class="steps">
+      <div class="step">
+        <span class="step-num mono">01</span>
+        <div><h3>Vyberete velikost a barvu</h3><p>Lesní zelená nebo slonová kost, unisex střih od XS po XXL.</p></div>
+      </div>
+      <div class="step">
+        <span class="step-num mono">02</span>
+        <div><h3>Ušijeme v malé dílně v Jihlavě</h3><p>Potisk i šití zvládne desetičlenná dílna, žádná velkovýroba na dálku.</p></div>
+      </div>
+      <div class="step">
+        <span class="step-num mono">03</span>
+        <div><h3>100 Kč pošleme útulku Šance</h3><p>Do 5 pracovních dnů od objednávky, s veřejným měsíčním vyúčtováním.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="spotlight" id="spotlight">
+    <div class="spotlight-card">
+      <div class="spotlight-art"><svg viewBox="0 0 100 100" aria-hidden="true"><use href="#shelter-card"/></svg></div>
+      <div>
+        <p class="eyebrow spotlight-eyebrow">Náš partner</p>
+        <h3>Útulek Šance, Kladno</h3>
+        <p>Neziskový útulek založený v roce 2014, který se stará o opuštěná a týraná zvířata ze středních Čech, dokud nenajdou nový domov.</p>
+        <div class="spotlight-stats">
+          <div><strong class="mono">38</strong><span>zvířat v péči</span></div>
+          <div><strong class="mono">1 200+</strong><span>adopcí od 2014</span></div>
+          <div><strong class="mono">12</strong><span>let provozu</span></div>
+        </div>
+        <div class="goal">
+          <div class="goal-labels"><span>Vybráno tento měsíc</span><span class="mono">18 400 / 25 000 Kč</span></div>
+          <div class="goal-bar"><span style="width:73.6%"></span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="reviews" id="reviews">
+    <div class="reviews-head">
+      <div class="score">
+        <span class="num mono">4,9</span>
+        <span class="stars" aria-hidden="true">★★★★★</span>
+        <span class="count">214 recenzí</span>
+      </div>
+      <div class="bars">
+        <div class="bar-row"><span>5★</span><span class="bar-track"><span style="width:93%"></span></span><span class="mono">200</span></div>
+        <div class="bar-row"><span>4★</span><span class="bar-track"><span style="width:5%"></span></span><span class="mono">10</span></div>
+        <div class="bar-row"><span>3★</span><span class="bar-track"><span style="width:1%"></span></span><span class="mono">2</span></div>
+        <div class="bar-row"><span>2★</span><span class="bar-track"><span style="width:.5%"></span></span><span class="mono">1</span></div>
+        <div class="bar-row"><span>1★</span><span class="bar-track"><span style="width:.5%"></span></span><span class="mono">1</span></div>
+      </div>
+    </div>
+    <div class="review-list">
+      <div class="review">
+        <div class="review-top"><span class="review-name">Petra N.<span class="verified">Ověřený nákup</span></span><span class="review-meta">velikost M · 3. srpna 2026</span></div>
+        <span class="stars" aria-hidden="true">★★★★★</span>
+        <p>Materiál sedí skvěle a ani po pěti praní se potisk packy nesetřel. A vědomí, že jsem tím pomohla útulku, je fajn bonus.</p>
+      </div>
+      <div class="review">
+        <div class="review-top"><span class="review-name">Tomáš K.<span class="verified">Ověřený nákup</span></span><span class="review-meta">velikost L · 21. července 2026</span></div>
+        <span class="stars" aria-hidden="true">★★★★★</span>
+        <p>Objednal jsem tři kusy na focení pro útulek, kde dobrovolničím. Kvalita bavlny je znatelně lepší než u běžných reklamních triček.</p>
+      </div>
+      <div class="review">
+        <div class="review-top"><span class="review-name">Zuzana H.<span class="verified">Ověřený nákup</span></span><span class="review-meta">velikost S · 9. července 2026</span></div>
+        <span class="stars" aria-hidden="true">★★★★☆</span>
+        <p>Střih je opravdu unisex, klidně bych si vzala i o velikost větší. Barva slonová kost je krásně teplá, ne bílá.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="related">
+    <p class="eyebrow">Doplňte kolekci</p>
+    <h2>Další kousky pro dobrou věc</h2>
+    <div class="related-grid">
+      <div class="rcard">
+        <div class="rimg"><svg viewBox="0 0 24 24"><use href="#ic-leaf"/></svg></div>
+        <h4>Mikina Packa</h4>
+        <p class="rprice mono">990 Kč</p>
+      </div>
+      <div class="rcard">
+        <div class="rimg"><svg viewBox="0 0 24 24"><use href="#ic-box"/></svg></div>
+        <h4>Plátěná taška Packa</h4>
+        <p class="rprice mono">390 Kč</p>
+      </div>
+      <div class="rcard">
+        <div class="rimg"><svg viewBox="0 0 24 24"><use href="#ic-paw"/></svg></div>
+        <h4>Ponožky Packa, 2 páry</h4>
+        <p class="rprice mono">290 Kč</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<footer class="site">
+  <div class="shell">
+    <div class="foot-grid">
+      <div>
+        <div class="brand" style="font-size:1.2rem;">PACKA</div>
+        <p class="foot-blurb">Malá pražírna trik s velkým srdcem. Šijeme v Jihlavě, podporujeme útulky po celém Česku.</p>
+      </div>
+      <div>
+        <h5>Obchod</h5>
+        <ul><li><a href="#">Trička</a></li><li><a href="#">Mikiny</a></li><li><a href="#">Doplňky</a></li></ul>
+      </div>
+      <div>
+        <h5>Útulky</h5>
+        <ul><li><a href="#spotlight">Útulek Šance</a></li><li><a href="#process">Jak darování funguje</a></li><li><a href="#">Vyúčtování</a></li></ul>
+      </div>
+      <div>
+        <h5>O nás</h5>
+        <ul><li><a href="#">Náš příběh</a></li><li><a href="#reviews">Recenze</a></li><li><a href="#">Kontakt</a></li></ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 Packa s.r.o.</span>
+      <span>Obchodní podmínky · Ochrana osobních údajů</span>
+    </div>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite">
+  <svg viewBox="0 0 24 24"><use href="#ic-check"/></svg>
+  <span id="toastText">Přidáno do košíku</span>
+</div>
+
+<script>
+(function(){
+  var state = { color: 'pine', colorLabel: 'Lesní zelená', size: null, qty: 1, cart: 0 };
+
+  function safeGet(key){ try { return localStorage.getItem(key); } catch(e){ return null; } }
+  function safeSet(key, val){ try { localStorage.setItem(key, val); } catch(e){} }
+
+  var savedColor = safeGet('packa_color');
+  var savedSize = safeGet('packa_size');
+  var savedCart = parseInt(safeGet('packa_cart') || '0', 10);
+  if (savedCart > 0) { state.cart = savedCart; }
+
+  var gallery = document.querySelector('.gallery');
+  var panels = document.querySelectorAll('.panel');
+  var thumbs = document.querySelectorAll('.thumb');
+  var swatches = document.querySelectorAll('.swatch');
+  var colorLabel = document.getElementById('colorLabel');
+  var sizeBtns = document.querySelectorAll('.size-btn');
+  var sizeLabel = document.getElementById('sizeLabel');
+  var sizeWarn = document.getElementById('sizeWarn');
+  var qtyInput = document.getElementById('qtyInput');
+  var addCartBtn = document.getElementById('addCartBtn');
+  var cartCount = document.getElementById('cartCount');
+  var toast = document.getElementById('toast');
+  var toastText = document.getElementById('toastText');
+  var toastTimer = null;
+
+  function setColor(color, label){
+    state.color = color; state.colorLabel = label;
+    gallery.style.setProperty('--shirt-color', 'var(--swatch-' + color + ')');
+    colorLabel.textContent = label;
+    swatches.forEach(function(s){
+      var active = s.getAttribute('data-color') === color;
+      s.classList.toggle('is-selected', active);
+      s.setAttribute('aria-pressed', active ? 'true' : 'false');
+    });
+    safeSet('packa_color', color);
+  }
+
+  function setSize(size){
+    state.size = size;
+    sizeLabel.textContent = size;
+    sizeBtns.forEach(function(b){ b.classList.toggle('is-selected', b.getAttribute('data-size') === size); });
+    sizeWarn.classList.remove('is-shown');
+    safeSet('packa_size', size);
+  }
+
+  function showPanel(name){
+    panels.forEach(function(p){ p.classList.toggle('is-active', p.getAttribute('data-panel') === name); });
+    thumbs.forEach(function(t){ t.classList.toggle('is-active', t.getAttribute('data-panel') === name); });
+  }
+
+  swatches.forEach(function(s){
+    s.addEventListener('click', function(){ setColor(s.getAttribute('data-color'), s.getAttribute('data-label')); });
+  });
+  sizeBtns.forEach(function(b){
+    b.addEventListener('click', function(){ setSize(b.getAttribute('data-size')); });
+  });
+  thumbs.forEach(function(t){
+    t.addEventListener('click', function(){ showPanel(t.getAttribute('data-panel')); });
+  });
+
+  document.getElementById('qtyMinus').addEventListener('click', function(){
+    state.qty = Math.max(1, state.qty - 1); qtyInput.value = state.qty;
+  });
+  document.getElementById('qtyPlus').addEventListener('click', function(){
+    state.qty = Math.min(10, state.qty + 1); qtyInput.value = state.qty;
+  });
+
+  function showToast(text){
+    toastText.textContent = text;
+    toast.classList.add('is-shown');
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ toast.classList.remove('is-shown'); }, 2600);
+  }
+
+  addCartBtn.addEventListener('click', function(){
+    if (!state.size){
+      sizeWarn.classList.add('is-shown');
+      document.querySelector('.sizes').scrollIntoView({ block: 'center', behavior: 'smooth' });
+      return;
+    }
+    state.cart += state.qty;
+    cartCount.textContent = state.cart;
+    safeSet('packa_cart', state.cart);
+    addCartBtn.classList.add('is-added');
+    setTimeout(function(){ addCartBtn.classList.remove('is-added'); }, 900);
+    showToast('Přidáno: Tričko Packa · ' + state.size + ' · ' + state.colorLabel + ' ×' + state.qty);
+  });
+
+  setColor(savedColor === 'bone' ? 'bone' : 'pine', savedColor === 'bone' ? 'Slonová kost' : 'Lesní zelená');
+  if (savedSize) setSize(savedSize);
+  cartCount.textContent = state.cart;
+})();
+</script>
+
+</body>
+</html>
