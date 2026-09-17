@@ -1,0 +1,1649 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Fytoterapeutická Anamnéza</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet" />
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.js"></script>
+
+<style>
+  :root {
+    --sage:        #7a9e87;
+    --sage-light:  #b5cebe;
+    --sage-pale:   #e8f0ec;
+    --rose:        #c9879b;
+    --rose-light:  #e8bfcb;
+    --rose-pale:   #faf0f3;
+    --cream:       #faf7f2;
+    --cream-dark:  #f0ebe0;
+    --text-dark:   #2d2d2d;
+    --text-mid:    #5a5a5a;
+    --text-light:  #8a8a8a;
+    --white:       #ffffff;
+    --shadow-sm:   0 2px 8px rgba(0,0,0,.06);
+    --shadow-md:   0 4px 20px rgba(0,0,0,.1);
+    --shadow-lg:   0 8px 40px rgba(0,0,0,.12);
+    --radius:      16px;
+    --radius-sm:   10px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--text-dark);
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 40% at 10% 15%, rgba(181,206,190,.35) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 45% at 90% 80%, rgba(201,135,155,.18) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 35% at 50% 50%, rgba(122,158,135,.08) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  #root { position: relative; z-index: 1; }
+
+  h1, h2, h3 { font-family: 'DM Serif Display', serif; }
+
+  .app-wrap {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 40px 20px 80px;
+  }
+
+  /* Header */
+  .app-header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  .app-header .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--sage-pale);
+    color: var(--sage);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    border-radius: 100px;
+    margin-bottom: 14px;
+  }
+  .app-header h1 {
+    font-size: clamp(26px, 5vw, 40px);
+    color: var(--text-dark);
+    line-height: 1.2;
+    margin-bottom: 10px;
+  }
+  .app-header h1 em {
+    font-style: italic;
+    color: var(--sage);
+  }
+  .app-header p {
+    color: var(--text-mid);
+    font-size: 15px;
+    font-weight: 300;
+    max-width: 420px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  /* Stepper */
+  .stepper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    margin-bottom: 40px;
+    position: relative;
+  }
+  .step-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    position: relative;
+    flex: 1;
+  }
+  .step-item::after {
+    content: '';
+    position: absolute;
+    top: 18px;
+    left: 50%;
+    width: 100%;
+    height: 2px;
+    background: var(--cream-dark);
+    z-index: 0;
+  }
+  .step-item:last-child::after { display: none; }
+  .step-dot {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 600;
+    position: relative;
+    z-index: 1;
+    transition: all .3s ease;
+    border: 2px solid var(--cream-dark);
+    background: var(--white);
+    color: var(--text-light);
+  }
+  .step-item.done .step-dot {
+    background: var(--sage);
+    border-color: var(--sage);
+    color: white;
+  }
+  .step-item.active .step-dot {
+    background: var(--white);
+    border-color: var(--sage);
+    color: var(--sage);
+    box-shadow: 0 0 0 4px rgba(122,158,135,.2);
+  }
+  .step-item::after {
+    background: linear-gradient(90deg, var(--sage-light) 0%, var(--cream-dark) 100%);
+  }
+  .step-item.done::after { background: var(--sage-light); }
+  .step-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-light);
+    text-align: center;
+    line-height: 1.3;
+    white-space: nowrap;
+  }
+  .step-item.active .step-label { color: var(--sage); font-weight: 600; }
+  .step-item.done .step-label { color: var(--sage); }
+
+  /* Card */
+  .card {
+    background: rgba(255,255,255,.85);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,.9);
+    border-radius: var(--radius);
+    padding: 36px;
+    box-shadow: var(--shadow-md);
+    animation: slideIn .4s ease;
+  }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+  .section-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: var(--sage-pale);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--sage);
+    flex-shrink: 0;
+  }
+  .section-title h2 {
+    font-size: 22px;
+    color: var(--text-dark);
+    line-height: 1.2;
+  }
+  .section-title p {
+    font-size: 13px;
+    color: var(--text-light);
+    font-weight: 300;
+    margin-top: 2px;
+  }
+
+  /* Field groups */
+  .field-group {
+    margin-bottom: 24px;
+  }
+  .field-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-mid);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+  }
+
+  /* Tip box */
+  .tip-box {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    background: linear-gradient(135deg, var(--sage-pale), var(--rose-pale));
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    margin-top: 8px;
+    font-size: 12px;
+    color: var(--text-mid);
+    line-height: 1.5;
+    border-left: 3px solid var(--sage-light);
+  }
+  .tip-box svg { color: var(--sage); flex-shrink: 0; margin-top: 1px; }
+
+  /* Option cards */
+  .option-grid {
+    display: grid;
+    gap: 10px;
+  }
+  .option-grid.cols-2 { grid-template-columns: 1fr 1fr; }
+  .option-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .option-grid.cols-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+
+  .option-card {
+    border: 2px solid var(--cream-dark);
+    border-radius: var(--radius-sm);
+    padding: 12px 16px;
+    cursor: pointer;
+    transition: all .2s ease;
+    background: var(--white);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    color: var(--text-mid);
+    user-select: none;
+  }
+  .option-card:hover {
+    border-color: var(--sage-light);
+    background: var(--sage-pale);
+    color: var(--text-dark);
+  }
+  .option-card.selected {
+    border-color: var(--sage);
+    background: var(--sage-pale);
+    color: var(--sage);
+    font-weight: 500;
+  }
+  .option-card.rose.selected {
+    border-color: var(--rose);
+    background: var(--rose-pale);
+    color: var(--rose);
+  }
+  .option-card .check {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 2px solid currentColor;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 10px;
+  }
+  .option-card.selected .check {
+    background: var(--sage);
+    border-color: var(--sage);
+    color: white;
+  }
+  .option-card.rose.selected .check {
+    background: var(--rose);
+    border-color: var(--rose);
+    color: white;
+  }
+
+  /* Pain scale */
+  .pain-scale {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .pain-btn {
+    width: 52px;
+    height: 52px;
+    border-radius: var(--radius-sm);
+    border: 2px solid var(--cream-dark);
+    background: var(--white);
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-mid);
+  }
+  .pain-btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-sm); }
+  .pain-btn.p1, .pain-btn.p2, .pain-btn.p3 { border-color: #a8c5a0; }
+  .pain-btn.p4, .pain-btn.p5, .pain-btn.p6 { border-color: #e0c080; }
+  .pain-btn.p7, .pain-btn.p8 { border-color: #e09060; }
+  .pain-btn.p9, .pain-btn.p10 { border-color: #d06060; }
+  .pain-btn.selected.p1, .pain-btn.selected.p2, .pain-btn.selected.p3 {
+    background: #a8c5a0; border-color: #a8c5a0; color: white;
+  }
+  .pain-btn.selected.p4, .pain-btn.selected.p5, .pain-btn.selected.p6 {
+    background: #e0c080; border-color: #e0c080; color: white;
+  }
+  .pain-btn.selected.p7, .pain-btn.selected.p8 {
+    background: #e09060; border-color: #e09060; color: white;
+  }
+  .pain-btn.selected.p9, .pain-btn.selected.p10 {
+    background: #d06060; border-color: #d06060; color: white;
+  }
+  .pain-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--text-light);
+    margin-top: 6px;
+  }
+
+  /* Input */
+  .input-field {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid var(--cream-dark);
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--text-dark);
+    background: var(--white);
+    outline: none;
+    transition: border-color .2s;
+  }
+  .input-field:focus { border-color: var(--sage); }
+  .input-field::placeholder { color: var(--text-light); }
+
+  .input-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  /* Number input with +/- */
+  .num-input-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    border: 2px solid var(--cream-dark);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    background: var(--white);
+    width: fit-content;
+  }
+  .num-btn {
+    width: 40px;
+    height: 42px;
+    background: var(--sage-pale);
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    color: var(--sage);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background .2s;
+    font-weight: 600;
+  }
+  .num-btn:hover { background: var(--sage-light); }
+  .num-display {
+    padding: 0 20px;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-dark);
+    min-width: 60px;
+    text-align: center;
+    line-height: 42px;
+    border-left: 1px solid var(--cream-dark);
+    border-right: 1px solid var(--cream-dark);
+  }
+
+  /* Cycle inputs */
+  .cycle-row {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .cycle-input {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+    min-width: 80px;
+  }
+  .cycle-input label {
+    font-size: 11px;
+    color: var(--text-light);
+    font-weight: 500;
+    text-align: center;
+  }
+
+  /* Navigation buttons */
+  .nav-buttons {
+    display: flex;
+    gap: 12px;
+    margin-top: 36px;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .btn {
+    padding: 14px 28px;
+    border-radius: 100px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all .2s ease;
+    border: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .btn-primary {
+    background: var(--sage);
+    color: white;
+    box-shadow: 0 4px 16px rgba(122,158,135,.4);
+  }
+  .btn-primary:hover {
+    background: #6a8e77;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(122,158,135,.5);
+  }
+  .btn-secondary {
+    background: var(--white);
+    color: var(--text-mid);
+    border: 2px solid var(--cream-dark);
+  }
+  .btn-secondary:hover { border-color: var(--sage-light); color: var(--sage); }
+  .btn-rose {
+    background: var(--rose);
+    color: white;
+    box-shadow: 0 4px 16px rgba(201,135,155,.4);
+  }
+  .btn-rose:hover { background: #b5758a; transform: translateY(-1px); }
+
+  .progress-text {
+    font-size: 13px;
+    color: var(--text-light);
+  }
+
+  /* Summary */
+  .summary-grid {
+    display: grid;
+    gap: 16px;
+  }
+  .summary-section {
+    background: var(--cream);
+    border-radius: var(--radius-sm);
+    padding: 20px;
+    border: 1px solid var(--cream-dark);
+  }
+  .summary-section h3 {
+    font-size: 14px;
+    color: var(--sage);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--cream-dark);
+    font-size: 13px;
+    gap: 12px;
+  }
+  .summary-row:last-child { border-bottom: none; }
+  .summary-row .key { color: var(--text-light); flex-shrink: 0; }
+  .summary-row .val { color: var(--text-dark); font-weight: 500; text-align: right; }
+
+  .alert-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(208, 96, 96, .1);
+    color: #c05050;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 100px;
+    margin-top: 4px;
+  }
+  .note-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: var(--sage-pale);
+    color: var(--sage);
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 100px;
+    margin-top: 4px;
+  }
+
+  .print-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 14px;
+    background: transparent;
+    border: 2px dashed var(--sage-light);
+    border-radius: var(--radius-sm);
+    color: var(--sage);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all .2s;
+    margin-top: 16px;
+  }
+  .print-btn:hover { background: var(--sage-pale); }
+
+  .divider {
+    height: 1px;
+    background: var(--cream-dark);
+    margin: 24px 0;
+  }
+
+  /* Intro page */
+  .intro-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 32px;
+  }
+  .intro-step {
+    display: grid;
+    grid-template-columns: auto auto 1fr;
+    gap: 18px;
+    align-items: flex-start;
+    padding: 18px 4px;
+    border-bottom: 1px solid var(--cream-dark);
+    transition: all .3s ease;
+  }
+  .intro-step:last-child { border-bottom: none; }
+  .intro-step:hover { background: rgba(232,240,236,.3); border-radius: 12px; padding-left: 12px; padding-right: 12px; }
+  .intro-step-num {
+    font-family: 'DM Serif Display', serif;
+    font-style: italic;
+    font-size: 28px;
+    color: var(--sage-light);
+    line-height: 1;
+    min-width: 36px;
+  }
+  .intro-step-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--sage-pale);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--sage);
+    flex-shrink: 0;
+  }
+  .intro-step-body h3 {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 4px;
+  }
+  .intro-step-body p {
+    font-size: 13px;
+    color: var(--text-mid);
+    font-weight: 300;
+    line-height: 1.55;
+  }
+  .intro-benefits {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 24px;
+    justify-content: center;
+  }
+  .intro-benefit {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--sage-pale);
+    color: var(--sage);
+    font-size: 12px;
+    font-weight: 500;
+    padding: 8px 14px;
+    border-radius: 100px;
+  }
+  .intro-cta {
+    width: 100%;
+    justify-content: center;
+    font-size: 16px;
+    padding: 18px;
+  }
+  .intro-disclaimer {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--text-light);
+    text-align: center;
+    margin-top: 16px;
+    justify-content: center;
+    line-height: 1.5;
+  }
+
+  /* Email block in summary */
+  .email-block {
+    margin-top: 20px;
+    background: linear-gradient(135deg, var(--sage-pale) 0%, var(--rose-pale) 100%);
+    border-radius: var(--radius);
+    padding: 24px;
+    border: 1px solid rgba(122,158,135,.15);
+  }
+  .email-block-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+  .email-block-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--sage);
+    flex-shrink: 0;
+  }
+  .email-block-head h3 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 18px;
+    color: var(--text-dark);
+    line-height: 1.2;
+  }
+  .email-block-head p {
+    font-size: 12px;
+    color: var(--text-mid);
+    font-weight: 300;
+    margin-top: 4px;
+    line-height: 1.5;
+  }
+  .consent {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 14px;
+    background: white;
+    border: 2px solid var(--cream-dark);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    margin-bottom: 16px;
+    transition: border-color .2s;
+    user-select: none;
+  }
+  .consent:hover { border-color: var(--sage-light); }
+  .consent.checked { border-color: var(--sage); }
+  .consent input { display: none; }
+  .consent-box {
+    width: 20px;
+    height: 20px;
+    border-radius: 6px;
+    border: 2px solid var(--cream-dark);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    margin-top: 1px;
+    transition: all .2s;
+  }
+  .consent.checked .consent-box {
+    background: var(--sage);
+    border-color: var(--sage);
+  }
+  .consent-text {
+    font-size: 12px;
+    color: var(--text-mid);
+    line-height: 1.5;
+  }
+  .consent-text strong { color: var(--text-dark); font-weight: 600; }
+  .email-send-btn {
+    width: 100%;
+    justify-content: center;
+    font-size: 15px;
+  }
+  .email-send-btn.disabled {
+    background: var(--cream-dark);
+    color: var(--text-light);
+    cursor: not-allowed;
+    box-shadow: none;
+    pointer-events: none;
+  }
+  .email-sent {
+    text-align: center;
+    padding: 40px 20px;
+    background: linear-gradient(135deg, var(--sage-pale) 0%, var(--rose-pale) 100%);
+    border-radius: var(--radius);
+    margin-top: 20px;
+  }
+  .email-sent-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: white;
+    color: var(--sage);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+    box-shadow: var(--shadow-sm);
+  }
+  .email-sent h3 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    color: var(--text-dark);
+    margin-bottom: 8px;
+  }
+  .email-sent p {
+    font-size: 14px;
+    color: var(--text-mid);
+    line-height: 1.6;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
+  @media (max-width: 600px) {
+    .intro-step { grid-template-columns: auto 1fr; gap: 12px; }
+    .intro-step-icon { display: none; }
+  }
+
+  /* Radio style */
+  .radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  /* Tag pills */
+  .tag-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 4px;
+  }
+  .tag {
+    padding: 6px 14px;
+    border-radius: 100px;
+    border: 2px solid var(--cream-dark);
+    font-size: 13px;
+    cursor: pointer;
+    transition: all .2s;
+    background: var(--white);
+    color: var(--text-mid);
+    user-select: none;
+  }
+  .tag:hover { border-color: var(--sage-light); color: var(--sage); }
+  .tag.selected { background: var(--sage); border-color: var(--sage); color: white; font-weight: 500; }
+  .tag.rose.selected { background: var(--rose); border-color: var(--rose); color: white; }
+
+  @media (max-width: 600px) {
+    .card { padding: 24px 20px; }
+    .option-grid.cols-3 { grid-template-columns: 1fr 1fr; }
+    .option-grid.cols-4 { grid-template-columns: 1fr 1fr; }
+    .input-row { grid-template-columns: 1fr; }
+    .step-label { display: none; }
+    .pain-btn { width: 40px; height: 40px; font-size: 14px; }
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useCallback } = React;
+
+// ── tiny icon helper ──────────────────────────────────────────────────────────
+const Icon = ({ name, size = 18, style = {} }) => {
+  const ref = React.useRef(null);
+  React.useEffect(() => {
+    if (ref.current && window.lucide) {
+      ref.current.innerHTML = '';
+      const el = document.createElement('i');
+      el.setAttribute('data-lucide', name);
+      ref.current.appendChild(el);
+      window.lucide.createIcons({ icons: window.lucide.icons, nameAttr: 'data-lucide', attrs: { width: size, height: size } });
+    }
+  }, [name, size]);
+  return <span ref={ref} style={{ display:'inline-flex', alignItems:'center', ...style }} />;
+};
+
+// ── Tip box ───────────────────────────────────────────────────────────────────
+const Tip = ({ text }) => (
+  <div className="tip-box">
+    <Icon name="lightbulb" size={14} />
+    <span><strong>Tip:</strong> {text}</span>
+  </div>
+);
+
+// ── Option card ───────────────────────────────────────────────────────────────
+const OptionCard = ({ label, selected, onClick, rose, icon }) => (
+  <div className={`option-card${selected?' selected':''}${rose?' rose':''}`} onClick={onClick}>
+    <span className="check">{selected && '✓'}</span>
+    {icon && <Icon name={icon} size={15} />}
+    <span>{label}</span>
+  </div>
+);
+
+// ── Tag pill ──────────────────────────────────────────────────────────────────
+const Tag = ({ label, selected, onClick, rose }) => (
+  <span className={`tag${selected?' selected':''}${rose?' rose':''}`} onClick={onClick}>{label}</span>
+);
+
+// ── Number stepper ────────────────────────────────────────────────────────────
+const NumStepper = ({ value, onChange, min = 0, max = 99, suffix = '' }) => (
+  <div className="num-input-wrap">
+    <button className="num-btn" onClick={() => onChange(Math.max(min, value - 1))}>−</button>
+    <span className="num-display">{value}{suffix}</span>
+    <button className="num-btn" onClick={() => onChange(Math.min(max, value + 1))}>+</button>
+  </div>
+);
+
+// ─────────────────────────────────────────────────────────────────────────────
+//  STEPS
+// ─────────────────────────────────────────────────────────────────────────────
+
+// STEP 1 ─ Základní profil
+const Step1 = ({ data, update }) => {
+  const ageGroups = ['< 18', '18–25', '26–35', '36–45', '46–55', '55+'];
+  const states = [
+    { val: 'normal', label: 'Normální cyklus', icon: 'circle-check' },
+    { val: 'peri',   label: 'Možná perimenopauza', icon: 'activity' },
+    { val: 'meno',   label: 'Menopauza', icon: 'sunset' },
+  ];
+  return (
+    <div>
+      <div className="field-group">
+        <div className="field-label"><Icon name="users" size={14} />Věková skupina</div>
+        <div className="option-grid cols-3">
+          {ageGroups.map(a => (
+            <OptionCard key={a} label={a} selected={data.ageGroup===a} onClick={() => update('ageGroup', a)} />
+          ))}
+        </div>
+      </div>
+
+      <div className="input-row">
+        <div className="field-group">
+          <div className="field-label"><Icon name="calendar" size={14} />Věk 1. menstruace</div>
+          <input className="input-field" type="number" min="8" max="18" placeholder="např. 13"
+            value={data.menarche} onChange={e => update('menarche', e.target.value)} />
+          <Tip text="Průměr je 12–13 let. Odchylka může signalizovat hormonální specifika." />
+        </div>
+        <div className="field-group">
+          <div className="field-label"><Icon name="calendar-days" size={14} />Datum poslední menstruace</div>
+          <input className="input-field" type="date" value={data.lmp} onChange={e => update('lmp', e.target.value)} />
+        </div>
+      </div>
+
+      <div className="field-group">
+        <div className="field-label"><Icon name="sparkles" size={14} />Hormonální stav</div>
+        <div className="option-grid cols-3">
+          {states.map(s => (
+            <OptionCard key={s.val} label={s.label} icon={s.icon}
+              selected={data.hormState===s.val} onClick={() => update('hormState', s.val)} />
+          ))}
+        </div>
+        <Tip text="Perimenopauza začíná průměrně v 45 letech a trvá 4–8 let. Cykly se zkracují nebo prodlužují." />
+      </div>
+    </div>
+  );
+};
+
+// STEP 2 ─ Historie & Triggery
+const Step2 = ({ data, update }) => {
+  const triggers = [
+    'Porod / kojení', 'Silný stres', 'Výrazná změna váhy',
+    'Intenzivní sport', 'Změna léků', 'Hormonální antikoncepce',
+    'PCOS', 'Onemocnění štítné žlázy', 'Diagnóza endometriózy',
+    'Operace v oblasti pánve', 'Cestování / jet lag', 'Jiné',
+  ];
+  const durations = ['Méně než 3 měsíce', '3–6 měsíců', '6–12 měsíců', '1–3 roky', 'Více než 3 roky'];
+  const onsets = ['Postupně', 'Náhle (do týdne)', 'Po konkrétní události'];
+
+  const toggleTrigger = (t) => {
+    const arr = data.triggers || [];
+    update('triggers', arr.includes(t) ? arr.filter(x=>x!==t) : [...arr, t]);
+  };
+
+  return (
+    <div>
+      <div className="input-row">
+        <div className="field-group">
+          <div className="field-label"><Icon name="baby" size={14} />Počet těhotenství</div>
+          <NumStepper value={data.pregnancies||0} min={0} max={15}
+            onChange={v => update('pregnancies', v)} />
+          <Tip text="Cyklus se může ustalovat až rok po porodu a déle při kojení." />
+        </div>
+        <div className="field-group">
+          <div className="field-label"><Icon name="stethoscope" size={14} />Gynekologické operace</div>
+          <div className="option-grid cols-2" style={{marginTop:0}}>
+            <OptionCard label="Ano" selected={data.surgery==='ano'} onClick={() => update('surgery','ano')} />
+            <OptionCard label="Ne" selected={data.surgery==='ne'} onClick={() => update('surgery','ne')} />
+          </div>
+        </div>
+      </div>
+
+      <div className="field-group">
+        <div className="field-label"><Icon name="repeat" size={14} />Délka posledních 3 cyklů (dny)</div>
+        <div className="cycle-row">
+          {[1,2,3].map(i => (
+            <div className="cycle-input" key={i}>
+              <label>Cyklus {i}</label>
+              <input className="input-field" type="number" min="14" max="90"
+                placeholder="–" style={{textAlign:'center'}}
+                value={data[`cycle${i}`]||''}
+                onChange={e => update(`cycle${i}`, e.target.value)} />
+            </div>
+          ))}
+        </div>
+        <Tip text="Normální rozmezí je 21–35 dní. Variabilita nad 7 dní mezi cykly je klinicky významná." />
+      </div>
+
+      <div className="field-group">
+        <div className="field-label"><Icon name="clock" size={14} />Délka trvání potíží</div>
+        <div className="tag-wrap">
+          {durations.map(d => (
+            <Tag key={d} label={d} selected={data.duration===d} onClick={() => update('duration', d)} />
+          ))}
+        </div>
+      </div>
+
+      <div className="field-group">
+        <div className="field-label"><Icon name="zap" size={14} />Nástup potíží</div>
+        <div className="option-grid cols-3">
+          {onsets.map(o => (
+            <OptionCard key={o} label={o} selected={data.onset===o} onClick={() => update('onset', o)} />
+          ))}
+        </div>
+      </div>
+
+      <div className="field-group">
+        <div className="field-label"><Icon name="search" size={14} />Možné spouštěče <span style={{fontWeight:300, textTransform:'none', letterSpacing:0}}>(vyberte vše, co platí)</span></div>
+        <div className="tag-wrap">
+          {triggers.map(t => (
+            <Tag key={t} label={t} selected={(data.triggers||[]).includes(t)}
+              onClick={() => toggleTrigger(t)} rose={(data.triggers||[]).includes(t)} />
+          ))}
+        </div>
+        <Tip text="PCOS a onemocnění štítné žlázy jsou nejčastější organické příčiny nepravidelného cyklu." />
+      </div>
+    </div>
+  );
+};
+
+// STEP 3 ─ Fyzické symptomy
+const Step3 = ({ data, update }) => {
+  const symptoms = [
+    { key:'pms', label:'PMS / premenstruační syndrom', icon:'cloud-rain' },
+    { key:'hairGrowth', label:'Zvýšené ochlupení (obličej, břicho)', icon:'feather' },
+    { key:'hairLoss', label:'Vypadávání vlasů', icon:'wind' },
+    { key:'breastTender', label:'Citlivost / bolest prsou', icon:'heart' },
+    { key:'acne', label:'Akné (zejm. v cyklu)', icon:'droplets' },
+    { key:'fatigue', label:'Únava a vyčerpání', icon:'battery-low' },
+    { key:'mood', label:'Výkyvy nálad', icon:'smile' },
+    { key:'bloating', label:'Nadýmání / zažívací problémy', icon:'cloud' },
+    { key:'nightSweat', label:'Noční pocení / návaly', icon:'thermometer' },
+    { key:'libido', label:'Snížení libida', icon:'minus-circle' },
+  ];
+  const weightChanges = ['Stabilní', 'Přibylo (>3 kg)', 'Ubylo (>3 kg)', 'Opakované výkyvy'];
+  const waterRet = ['Žádné', 'Mírné (otoky kotníků)', 'Výrazné (obličej, ruce)', 'Premenstruační'];
+
+  const toggleSym = (k) => update(k, !data[k]);
+
+  return (
+    <div>
+      <div className="input-row">
+        <div className="field-group">
+          <div className="field-label"><Icon name="weight" size={14} />Aktuální hmotnost (kg)</div>
+          <input className="input-field" type="number" min="30" max="200"
+            placeholder="např. 65"
+            value={data.weight||''} onChange={e => update('weight', e.target.value)} />
+        </div>
+        <div className="field-group">
+          <div className="field-label"><Icon name="ruler" size={14} />Výška (cm)</div>
+          <input className="input-field" type="number" min="140" max="210"
+            placeholder="např. 168"
+            value={data.height||''} onChange={e => update('height', e.target.value)} />
+        </div>
+      </div>
+
+      <div className="field-group">
+        <div className="field-label"><Icon name="trending-up" size={14} />Změna hmotnosti v posledních 6 měsících</div>
+        <div className="tag-wrap">
+          {weightChanges.map(w => (
+            <Tag key={w} label={w} selected={data.weightChange===w} onClick={() => update('weightChange', w)} />
+          ))}
+        </div>
+        <Tip text="Ztráta nebo nárůst >10% tělesné hmotnosti může výrazně narušit osu hypotalamus–hypofýza–ovarium." />
+      </div>
+
+      <div className="field-group">
+        <div className="field-label"><Icon name="droplets" size={14} />Zadržování vody</div>
+        <div className="option-grid cols-2">
+          {waterRet.map(w => (
+            <OptionCard key={w} label={w} selected={data.waterRetention===w}
+              onClick={() => update('waterRetention', w)} />
+          ))}
+        </div>
+      </div>
+
+      <div className="divider" />
+
+      <div className="field-group">
+        <div className="field-label"><Icon name="activity" size={14} />Hormonální & fyzické projevy</div>
+        <div className="option-grid cols-2">
+          {symptoms.map(s => (
+            <OptionCard key={s.key} label={s.label} icon={s.icon}
+              selected={!!data[s.key]} onClick={() => toggleSym(s.key)} />
+          ))}
+        </div>
+        <Tip text="Kombinace akné, nadměrného ochlupení a nepravidelných cyklů může indikovat PCOS." />
+      </div>
+    </div>
+  );
+};
+
+// STEP 4 ─ Analýza bolesti
+const Step4 = ({ data, update }) => {
+  const locations = [
+    { key:'lowerAbdomen', label:'Podbřišek', icon:'map-pin' },
+    { key:'lowerBack', label:'Záda / kříž', icon:'move-vertical' },
+    { key:'thighs', label:'Vnitřní stehna', icon:'arrow-down-wide-narrow' },
+    { key:'bladder', label:'Při močení', icon:'droplet' },
+    { key:'bowel', label:'Při stolici', icon:'alert-circle' },
+    { key:'intercourse', label:'Při pohlavním styku', icon:'heart' },
+  ];
+  const timing = ['Pouze před menstruací', 'Pouze během menstruace', 'Celý cyklus', 'Ovulační bolest', 'Chronická (stálá)'];
+  const quality = ['Křeče', 'Tupá tlaková bolest', 'Bodavá', 'Pulsující', 'Pálivá'];
+
+  const toggleLoc = (k) => update(k, !data[k]);
+
+  const painClass = (n) => {
+    if (n <= 3) return 'p'+n;
+    if (n <= 6) return 'p'+n;
+    if (n <= 8) return 'p'+n;
+    return 'p'+n;
+  };
+
+  return (
+    <div>
+      <div className="field-group">
+        <div className="field-label"><Icon name="gauge" size={14} />Intenzita bolesti (1–10)</div>
+        <div className="pain-scale">
+          {[1,2,3,4,5,6,7,8,9,10].map(n => (
+            <button key={n} className={`pain-btn p${n}${data.painLevel===n?' selected':''}`}
+              onClick={() => update('painLevel', n)}>{n}</button>
+          ))}
+        </div>
+        <div className="pain-labels">
+          <span>Žádná bolest</span>
+          <span>Střední</span>
+          <span>Nesnesitelná</span>
+        </div>
+        {data.painLevel >= 7 && (
+          <div style={{marginTop:8}}>
+            <span className="alert-badge"><Icon name="alert-triangle" size={11} />Vysoká intenzita – zvážit gynekologické vyšetření</span>
+          </div>
+        )}
+        {data.painLevel && data.painLevel <= 3 && (
+          <div style={{marginTop:8}}>
+            <span className="note-badge"><Icon name="check-circle" size={11} />Mírná bolest – dobře zvladatelná fytoterapií</span>
+          </div>
+        )}
+      </div>
+
+      <div className="field-group">
+        <div className="field-label"><Icon name="map-pin" size={14} />Lokalizace bolesti</div>
+        <div className="option-grid cols-3">
+          {locations.map(l => (
+            <OptionCard key={l.key} label={l.label} icon={l.icon}
+              selected={!!data[l.key]} onClick={() => toggleLoc(l.key)} />
+          ))}
+        </div>
+        {(data.bladder || data.bowel || data.intercourse) && (
+          <div style={{marginTop:8}}>
+            <span className="alert-badge"><Icon name="alert-triangle" size={11} />Bolest při močení/stolici/styku – možná indikace endometriózy</span>
+          </div>
+        )}
+        <Tip text="Bolest při defekaci nebo pohlavním styku je klíčovým příznakem endometriózy – vždy odeslat ke gynekologovi." />
+      </div>
+
+      <div className="field-group">
+        <div className="field-label"><Icon name="clock" size={14} />Časování bolesti</div>
+        <div className="tag-wrap">
+          {timing.map(t => (
+            <Tag key={t} label={t} selected={data.painTiming===t} onClick={() => update('painTiming', t)} />
+          ))}
+        </div>
+      </div>
+
+      <div className="field-group">
+        <div className="field-label"><Icon name="edit-3" size={14} />Charakter bolesti</div>
+        <div className="tag-wrap">
+          {quality.map(q => (
+            <Tag key={q} label={q} selected={(data.painQuality||[]).includes(q)}
+              onClick={() => {
+                const arr = data.painQuality||[];
+                update('painQuality', arr.includes(q) ? arr.filter(x=>x!==q) : [...arr,q]);
+              }} />
+          ))}
+        </div>
+      </div>
+
+      <div className="field-group">
+        <div className="field-label"><Icon name="pill" size={14} />Lékové zmírnění bolesti</div>
+        <div className="option-grid cols-2">
+          <OptionCard label="Ibuprofen / NSAID" selected={data.painMed==='nsaid'} onClick={() => update('painMed','nsaid')} />
+          <OptionCard label="Paracetamol" selected={data.painMed==='para'} onClick={() => update('painMed','para')} />
+          <OptionCard label="Silnější analgetika" selected={data.painMed==='strong'} onClick={() => update('painMed','strong')} rose />
+          <OptionCard label="Bez léků" selected={data.painMed==='none'} onClick={() => update('painMed','none')} />
+        </div>
+        <Tip text="NSAID (ibuprofen) inhibují prostaglandiny – jsou první volbou u dysmenorey. Pokud nestačí, zvážit hormonální vyšetření." />
+      </div>
+    </div>
+  );
+};
+
+// STEP 5 ─ Průběh periody
+const Step5 = ({ data, update }) => {
+  const durations = ['1–2 dny', '3–4 dny', '5–6 dní', '7+ dní'];
+  const intensities = [
+    { val:'light', label:'Slabá (< 2 vložky/den)' },
+    { val:'normal', label:'Normální (2–4 vložky/den)' },
+    { val:'heavy', label:'Silná (4–6 vložek/den)' },
+    { val:'very_heavy', label:'Velmi silná (> 6 vložek/den)' },
+  ];
+  const clotSizes = ['Žádné', 'Drobné (< 1 cm)', 'Střední (1–3 cm)', 'Velké (> 3 cm)'];
+  const colors = ['Jasně červená', 'Tmavě červená / hnědá', 'Růžová / světlá', 'Černá / velmi tmavá'];
+  const irregTypes = [
+    'Vynechávání cyklů', 'Zkracování cyklů', 'Prodlužování cyklů',
+    'Mezimenstruační krvácení', 'Špinění mimo cyklus', 'Krvácení po styku',
+  ];
+
+  const toggleIrreg = (t) => {
+    const arr = data.irregTypes||[];
+    update('irregTypes', arr.includes(t) ? arr.filter(x=>x!==t) : [...arr,t]);
+  };
+
+  return (
+    <div>
+      <div className="field-group">
+        <div className="field-label"><Icon name="calendar-range" size={14} />Délka menstruace</div>
+        <div className="option-grid cols-4">
+          {durations.map(d => (
+            <OptionCard key={d} label={d} selected={data.periodDuration===d}
+              onClick={() => update('periodDuration', d)} />
+          ))}
+        </div>
+      </div>
+
+      <div className="field-group">
+        <div className="field-label"><Icon name="droplets" size={14} />Intenzita krvácení</div>
+        <div className="option-grid cols-2">
+          {intensities.map(i => (
+            <OptionCard key={i.val} label={i.label}
+              selected={data.intensity===i.val} onClick={() => update('intensity', i.val)}
+              rose={i.val==='very_heavy'} />
+          ))}
+        </div>
+        {data.intensity === 'very_heavy' && (
+          <div style={{marginTop:8}}>
+            <span className="alert-badge"><Icon name="alert-triangle" size={11} />Hypermenorea – riziko anémie, doporučit krevní obraz</span>
+          </div>
+        )}
+        <Tip text="Změna vložky/tamponu každou hodinu nebo méně je klinicky závažná (hypermenorea)." />
+      </div>
+
+      <div className="field-group">
+        <div className="field-label"><Icon name="circle" size={14} />Sraženiny</div>
+        <div className="option-grid cols-2">
+          {clotSizes.map(c => (
+            <OptionCard key={c} label={c} selected={data.clots===c} onClick={() => update('clots', c)}
+              rose={c==='Velké (> 3 cm)'} />
+          ))}
+        </div>
+        {data.clots === 'Velké (> 3 cm)' && (
+          <div style={{marginTop:8}}>
+            <span className="alert-badge"><Icon name="alert-triangle" size={11} />Velké sraženiny – vyloučit myomy / adenomyózu</span>
+          </div>
+        )}
+        <Tip text="Malé sraženiny jsou fyziologické. Sraženiny > 2 cm signalizují zvýšený menstruační průtok." />
+      </div>
+
+      <div className="field-group">
+        <div className="field-label"><Icon name="palette" size={14} />Barva menstruační krve</div>
+        <div className="option-grid cols-2">
+          {colors.map(c => (
+            <OptionCard key={c} label={c} selected={data.bloodColor===c}
+              onClick={() => update('bloodColor', c)} />
+          ))}
+        </div>
+        <Tip text="Tmavě hnědá krev na začátku/konci cyklu je stará krev – normální. Černá krev trvale může naznačovat nedostatečné vyprazdňování dělohy." />
+      </div>
+
+      <div className="field-group">
+        <div className="field-label"><Icon name="shuffle" size={14} />Typ nepravidelnosti <span style={{fontWeight:300, textTransform:'none', letterSpacing:0}}>(vyberte vše, co platí)</span></div>
+        <div className="tag-wrap">
+          {irregTypes.map(t => (
+            <Tag key={t} label={t} selected={(data.irregTypes||[]).includes(t)}
+              onClick={() => toggleIrreg(t)} rose={(data.irregTypes||[]).includes(t)} />
+          ))}
+        </div>
+        {(data.irregTypes||[]).includes('Krvácení po styku') && (
+          <div style={{marginTop:8}}>
+            <span className="alert-badge"><Icon name="alert-triangle" size={11} />Krvácení po styku – vždy odeslat ke gynekologickému vyšetření</span>
+          </div>
+        )}
+        <Tip text="Mezimenstruační krvácení nebo krvácení po styku vyžaduje gynekologické vyšetření k vyloučení organické příčiny." />
+      </div>
+
+      <div className="field-group">
+        <div className="field-label"><Icon name="droplet" size={14} />Krev v moči (hematurie)</div>
+        <div className="option-grid cols-2">
+          <OptionCard label="Ne" selected={data.hematuria==='ne'} onClick={() => update('hematuria','ne')} />
+          <OptionCard label="Ano / nejsem si jistá" selected={data.hematuria==='ano'} rose
+            onClick={() => update('hematuria','ano')} />
+        </div>
+        {data.hematuria === 'ano' && (
+          <div style={{marginTop:8}}>
+            <span className="alert-badge"><Icon name="alert-triangle" size={11} />Hematurie – nutné interní/urologické vyšetření</span>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+//  SUMMARY
+// ─────────────────────────────────────────────────────────────────────────────
+const Summary = ({ data, onReset }) => {
+  const [email, setEmail] = useState('');
+  const [consent, setConsent] = useState(false);
+  const [sent, setSent] = useState(false);
+  const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const canSend = emailValid && consent;
+  const handleSend = () => {
+    if (!canSend) return;
+    setSent(true);
+  };
+  const d = data;
+  const yesNo = v => v === 'ano' ? 'Ano' : v === 'ne' ? 'Ne' : v || '–';
+
+  const Row = ({ k, v }) => (
+    <div className="summary-row">
+      <span className="key">{k}</span>
+      <span className="val">{v || '–'}</span>
+    </div>
+  );
+
+  const painColor = (n) => {
+    if (!n) return '–';
+    if (n <= 3) return `${n}/10 (mírná)`;
+    if (n <= 6) return `${n}/10 (střední)`;
+    if (n <= 8) return `${n}/10 (silná)`;
+    return `${n}/10 ⚠ závažná`;
+  };
+
+  const selectedLocations = ['lowerAbdomen','lowerBack','thighs','bladder','bowel','intercourse']
+    .filter(k => d.step4?.[k])
+    .map(k => ({'lowerAbdomen':'Podbřišek','lowerBack':'Záda','thighs':'Stehna','bladder':'Při močení','bowel':'Při stolici','intercourse':'Při styku'})[k])
+    .join(', ');
+
+  const selectedSymptoms = ['pms','hairGrowth','hairLoss','breastTender','acne','fatigue','mood','bloating','nightSweat','libido']
+    .filter(k => d.step3?.[k])
+    .map(k => ({'pms':'PMS','hairGrowth':'Ochlupení','hairLoss':'Vypadávání vlasů','breastTender':'Citlivost prsou','acne':'Akné','fatigue':'Únava','mood':'Výkyvy nálad','bloating':'Nadýmání','nightSweat':'Noční pocení','libido':'Snížení libida'})[k])
+    .join(', ');
+
+  const bmi = (d.step3?.weight && d.step3?.height)
+    ? (d.step3.weight / Math.pow(d.step3.height/100, 2)).toFixed(1)
+    : null;
+
+  const today = new Date().toLocaleDateString('cs-CZ', {day:'2-digit', month:'long', year:'numeric'});
+
+  return (
+    <div>
+      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:20,flexWrap:'wrap',gap:8}}>
+        <div>
+          <h2 style={{fontFamily:"'DM Serif Display',serif",fontSize:22,color:'var(--text-dark)'}}>Souhrn anamnézy</h2>
+          <p style={{fontSize:12,color:'var(--text-light)',marginTop:2}}>Vytvořeno: {today}</p>
+        </div>
+        <span className="note-badge" style={{fontSize:12}}>
+          <Icon name="shield-check" size={12} />Pro terapeuta
+        </span>
+      </div>
+
+      <div className="summary-grid">
+        <div className="summary-section">
+          <h3><Icon name="user" size={13} />Základní profil</h3>
+          <Row k="Věková skupina" v={d.step1?.ageGroup} />
+          <Row k="Věk 1. menstruace" v={d.step1?.menarche ? `${d.step1.menarche} let` : null} />
+          <Row k="Datum poslední menstruace" v={d.step1?.lmp ? new Date(d.step1.lmp).toLocaleDateString('cs-CZ') : null} />
+          <Row k="Hormonální stav" v={{'normal':'Normální','peri':'Možná perimenopauza','meno':'Menopauza'}[d.step1?.hormState]} />
+        </div>
+
+        <div className="summary-section">
+          <h3><Icon name="history" size={13} />Historie & Triggery</h3>
+          <Row k="Těhotenství" v={d.step2?.pregnancies != null ? `${d.step2.pregnancies}×` : null} />
+          <Row k="Gynekol. operace" v={yesNo(d.step2?.surgery)} />
+          <Row k="Délka cyklů (posl. 3)" v={[d.step2?.cycle1,d.step2?.cycle2,d.step2?.cycle3].filter(Boolean).join(' / ') + (d.step2?.cycle1 ? ' dní' : '') || '–'} />
+          <Row k="Délka potíží" v={d.step2?.duration} />
+          <Row k="Nástup" v={d.step2?.onset} />
+          <Row k="Spouštěče" v={(d.step2?.triggers||[]).join(', ') || '–'} />
+        </div>
+
+        <div className="summary-section">
+          <h3><Icon name="activity" size={13} />Fyzické symptomy & Váha</h3>
+          <Row k="Hmotnost / Výška" v={d.step3?.weight ? `${d.step3.weight} kg / ${d.step3.height||'?'} cm` : null} />
+          <Row k="BMI" v={bmi ? `${bmi}${bmi < 18.5 ? ' ⚠ podváha' : bmi > 25 ? ' ⚠ nadváha' : ' (normální)'}` : null} />
+          <Row k="Změna hmotnosti" v={d.step3?.weightChange} />
+          <Row k="Zadržování vody" v={d.step3?.waterRetention} />
+          <Row k="Symptomy" v={selectedSymptoms || '–'} />
+        </div>
+
+        <div className="summary-section">
+          <h3><Icon name="gauge" size={13} />Analýza bolesti</h3>
+          <Row k="Intenzita" v={painColor(d.step4?.painLevel)} />
+          <Row k="Lokalizace" v={selectedLocations || '–'} />
+          <Row k="Časování" v={d.step4?.painTiming} />
+          <Row k="Charakter" v={(d.step4?.painQuality||[]).join(', ')} />
+          <Row k="Analgetika" v={{'nsaid':'Ibuprofen / NSAID','para':'Paracetamol','strong':'Silná analgetika ⚠','none':'Bez léků'}[d.step4?.painMed]} />
+          {(d.step4?.bladder || d.step4?.bowel || d.step4?.intercourse) && (
+            <span className="alert-badge" style={{marginTop:6}}>
+              <Icon name="alert-triangle" size={11} />Možná endometrióza – doporučit gynekologické vyšetření
+            </span>
+          )}
+        </div>
+
+        <div className="summary-section">
+          <h3><Icon name="droplets" size={13} />Průběh periody</h3>
+          <Row k="Délka menstruace" v={d.step5?.periodDuration} />
+          <Row k="Intenzita krvácení" v={{'light':'Slabá','normal':'Normální','heavy':'Silná','very_heavy':'Velmi silná ⚠'}[d.step5?.intensity]} />
+          <Row k="Sraženiny" v={d.step5?.clots} />
+          <Row k="Barva krve" v={d.step5?.bloodColor} />
+          <Row k="Typ nepravidelnosti" v={(d.step5?.irregTypes||[]).join(', ') || '–'} />
+          <Row k="Krev v moči" v={yesNo(d.step5?.hematuria)} />
+          {d.step5?.intensity === 'very_heavy' && (
+            <span className="alert-badge" style={{marginTop:6}}>
+              <Icon name="alert-triangle" size={11} />Hypermenorea – zvážit krevní obraz (anémie)
+            </span>
+          )}
+          {d.step5?.hematuria === 'ano' && (
+            <span className="alert-badge" style={{marginTop:6, marginLeft:0, display:'block', width:'fit-content'}}>
+              <Icon name="alert-triangle" size={11} />Hematurie – nutné interní vyšetření
+            </span>
+          )}
+        </div>
+      </div>
+
+      {!sent ? (
+        <div className="email-block">
+          <div className="email-block-head">
+            <div className="email-block-icon"><Icon name="mail" size={18} /></div>
+            <div>
+              <h3>Odeslat souhrn na e-mail</h3>
+              <p>Pošleme vám shrnutí a do několika dní doporučení bylinek po kontrole odborníků.</p>
+            </div>
+          </div>
+
+          <div className="field-group" style={{marginBottom:14}}>
+            <div className="field-label"><Icon name="at-sign" size={14} />Váš e-mail</div>
+            <input className="input-field" type="email" placeholder="vase@adresa.cz"
+              value={email} onChange={e => setEmail(e.target.value)} />
+          </div>
+
+          <label className={`consent${consent?' checked':''}`}>
+            <input type="checkbox" checked={consent} onChange={e => setConsent(e.target.checked)} />
+            <span className="consent-box">{consent && <Icon name="check" size={12} />}</span>
+            <span className="consent-text">
+              <strong>Souhlasím se zpracováním osobních a zdravotních údajů</strong> za účelem odborného posouzení a doručení doporučení bylinek. Údaje jsou důvěrné, zpracovávané v souladu s GDPR, a budou předány pouze pověřenému farmaceutovi a fytoterapeutce. Souhlas mohu kdykoliv odvolat. <span style={{color:'var(--rose)', fontWeight:600}}>*</span>
+            </span>
+          </label>
+
+          <button
+            className={`btn btn-primary email-send-btn${!canSend?' disabled':''}`}
+            onClick={handleSend} disabled={!canSend}>
+            <Icon name="send" size={16} />Odeslat e-mailem
+          </button>
+        </div>
+      ) : (
+        <div className="email-sent">
+          <div className="email-sent-icon"><Icon name="check-circle" size={28} /></div>
+          <h3>Odesláno! Děkujeme.</h3>
+          <p>Souhrn jsme odeslali na <strong>{email}</strong>. Do několika dní vám naše odbornice zašlou doporučení bylinek.</p>
+          <button className="btn btn-secondary" onClick={onReset} style={{margin:'18px auto 0'}}>
+            <Icon name="refresh-cw" size={16} />Vyplnit znovu
+          </button>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+//  MAIN APP
+// ─────────────────────────────────────────────────────────────────────────────
+const STEPS = [
+  { label: 'Profil', icon: 'user' },
+  { label: 'Historie', icon: 'history' },
+  { label: 'Symptomy', icon: 'activity' },
+  { label: 'Bolest', icon: 'gauge' },
+  { label: 'Krvácení', icon: 'droplets' },
+];
+
+// ─────────────────────────────────────────────────────────────────────────────
+//  INTRO PAGE
+// ─────────────────────────────────────────────────────────────────────────────
+const Intro = ({ onStart }) => {
+  const steps = [
+    { num: '01', icon: 'clipboard-list', title: 'Vyplníte dotazník', desc: 'Pět krátkých kroků o vašem cyklu, symptomech a zdravotní historii. Zabere to přibližně 8 minut.' },
+    { num: '02', icon: 'mail', title: 'Pošleme vám souhrn na email', desc: 'Přehledné shrnutí vaší anamnézy obdržíte do několika minut do své e-mailové schránky.' },
+    { num: '03', icon: 'shield-check', title: 'Odbornice ho zkontrolují', desc: 'Vybrané dotazníky projdou kontrolou farmaceuta a profesionální fytoterapeutky.' },
+    { num: '04', icon: 'leaf', title: 'Navrhneme bylinky', desc: 'Na základě vašich obtíží vám doporučíme konkrétní bylinné přípravky, které vám mohou pomoci.' },
+  ];
+  const benefits = [
+    { icon: 'lock', text: 'Důvěrnost dat' },
+    { icon: 'heart', text: 'Empatický přístup' },
+    { icon: 'flask-conical', text: 'Odborná kontrola' },
+  ];
+  return (
+    <div className="app-wrap">
+      <div className="app-header">
+        <div className="badge"><Icon name="leaf" size={12} />Bylinkový formulář</div>
+        <h1>Vraťte svému tělu <em>rovnováhu</em></h1>
+        <p>Bezplatný dotazník pro ženy s nepravidelnou menstruací. Připravený fytoterapeutkami, kontrolovaný farmaceutem.</p>
+      </div>
+
+      <div className="card">
+        <div style={{marginBottom: 28}}>
+          <h2 style={{fontFamily:"'DM Serif Display',serif", fontSize:22, color:'var(--text-dark)', marginBottom:6}}>Jak to funguje</h2>
+          <p style={{fontSize:13, color:'var(--text-light)', fontWeight:300}}>Čtyři kroky k osobnímu doporučení bylinek šitým na míru.</p>
+        </div>
+
+        <div className="intro-steps">
+          {steps.map((s, i) => (
+            <div key={i} className="intro-step">
+              <div className="intro-step-num">{s.num}</div>
+              <div className="intro-step-icon"><Icon name={s.icon} size={20} /></div>
+              <div className="intro-step-body">
+                <h3>{s.title}</h3>
+                <p>{s.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="intro-benefits">
+          {benefits.map((b, i) => (
+            <div key={i} className="intro-benefit">
+              <Icon name={b.icon} size={14} />
+              <span>{b.text}</span>
+            </div>
+          ))}
+        </div>
+
+        <button className="btn btn-primary intro-cta" onClick={onStart}>
+          Začít dotazník <Icon name="arrow-right" size={16} />
+        </button>
+        <p className="intro-disclaimer">
+          <Icon name="info" size={12} />
+          Dotazník nenahrazuje lékařské vyšetření. V případě závažných symptomů vždy navštivte gynekologa.
+        </p>
+      </div>
+    </div>
+  );
+};
+
+const App = () => {
+  const [showIntro, setShowIntro] = useState(true);
+  const [step, setStep] = useState(0);
+  const [showSummary, setShowSummary] = useState(false);
+  const [formData, setFormData] = useState({
+    step1: {}, step2: {}, step3: {}, step4: {}, step5: {}
+  });
+
+  const update = useCallback((stepKey, field, value) => {
+    setFormData(prev => ({
+      ...prev,
+      [stepKey]: { ...prev[stepKey], [field]: value }
+    }));
+  }, []);
+
+  const makeUpdater = (stepKey) => (field, value) => update(stepKey, field, value);
+
+  const stepContent = [
+    <Step1 data={formData.step1} update={makeUpdater('step1')} />,
+    <Step2 data={formData.step2} update={makeUpdater('step2')} />,
+    <Step3 data={formData.step3} update={makeUpdater('step3')} />,
+    <Step4 data={formData.step4} update={makeUpdater('step4')} />,
+    <Step5 data={formData.step5} update={makeUpdater('step5')} />,
+  ];
+
+  const sectionIcons = ['user', 'history', 'activity', 'gauge', 'droplets'];
+  const sectionTitles = [
+    ['Základní profil', 'Věk, menstruační anamnéza a hormonální stav'],
+    ['Historie & Triggery', 'Těhotenství, operace, délka cyklů a spouštěče'],
+    ['Fyzické symptomy & Váha', 'Hormonální projevy, hmotnost a zadržování vody'],
+    ['Analýza bolesti', 'Intenzita, lokalizace, timing – klinické zaměření'],
+    ['Průběh periody', 'Délka, síla krvácení, sraženiny a nepravidelnosti'],
+  ];
+
+  if (showIntro) {
+    return <Intro onStart={() => setShowIntro(false)} />;
+  }
+
+  if (showSummary) {
+    return (
+      <div className="app-wrap">
+        <div className="app-header">
+          <div className="badge"><Icon name="leaf" size={12} />Bylinkový formulář</div>
+          <h1>Váš <em>přehled</em> je připraven</h1>
+          <p>Zkontrolujte své odpovědi a odešlete shrnutí na email. Odbornice se vám brzy ozvou s doporučením bylinek.</p>
+        </div>
+        <div className="card"><Summary data={formData} onReset={() => { setFormData({step1:{},step2:{},step3:{},step4:{},step5:{}}); setStep(0); setShowSummary(false); setShowIntro(true); }} /></div>
+        <div className="nav-buttons">
+          <button className="btn btn-secondary" onClick={() => { setShowSummary(false); setStep(4); }}>
+            <Icon name="arrow-left" size={16} />Zpět k úpravám
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="app-wrap">
+      <div className="app-header">
+        <div className="badge"><Icon name="leaf" size={12} />Bylinkový formulář</div>
+        <h1>Menstruační <em>cyklus</em></h1>
+        <p>Vyplňte prosím podrobnosti o vašem menstruačním cyklu. Informace jsou důvěrné.</p>
+      </div>
+
+      <div className="stepper">
+        {STEPS.map((s, i) => (
+          <div key={i} className={`step-item${i===step?' active':i<step?' done':''}`}
+            onClick={() => i < step && setStep(i)} style={{cursor: i < step ? 'pointer' : 'default'}}>
+            <div className="step-dot">
+              {i < step ? <Icon name="check" size={14} /> : i+1}
+            </div>
+            <span className="step-label">{s.label}</span>
+          </div>
+        ))}
+      </div>
+
+      <div className="card" key={step}>
+        <div className="section-title">
+          <div className="section-icon">
+            <Icon name={sectionIcons[step]} size={20} />
+          </div>
+          <div>
+            <h2>{sectionTitles[step][0]}</h2>
+            <p>{sectionTitles[step][1]}</p>
+          </div>
+        </div>
+        {stepContent[step]}
+
+        <div className="nav-buttons">
+          {step > 0
+            ? <button className="btn btn-secondary" onClick={() => setStep(s => s-1)}>
+                <Icon name="arrow-left" size={16} />Zpět
+              </button>
+            : <span />
+          }
+          <span className="progress-text">{step+1} / {STEPS.length}</span>
+          {step < STEPS.length - 1
+            ? <button className="btn btn-primary" onClick={() => setStep(s => s+1)}>
+                Další <Icon name="arrow-right" size={16} />
+              </button>
+            : <button className="btn btn-rose" onClick={() => setShowSummary(true)}>
+                <Icon name="check-circle" size={16} />Zobrazit souhrn
+              </button>
+          }
+        </div>
+      </div>
+    </div>
+  );
+};
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
